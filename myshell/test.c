@@ -20,6 +20,32 @@ int Split(char input[],char* output[])
   }
   return i;
 }
+//输入 ls -l /
+//argv[0]->ls
+//argv[1]->-l
+//argv[2]->/
+
+void CreatProcess(char *argv[],int n)
+{
+  //创建子进程
+  pid_t ret=fork();
+  //父进程等待
+  if(ret>0)
+  {
+    wait(NULL);
+  }
+  else if(ret==0)
+  {
+    ret=execvp(argv[0],argv);
+    //if条件可以省略，如果exec成功
+    //肯定不会执行这个代码
+    perror("exec");
+    exit(0);
+  }
+  else{
+    perror("fork");
+  }
+}
 
 int main()
 {
@@ -38,7 +64,7 @@ int main()
   char *argv[1024]={0};
   int n=Split(command,argv);
   //4。创建子进程并且程序替换
-  CreatProcess();
+  CreatProcess(argv,n);
   }
   return 0;
 }
