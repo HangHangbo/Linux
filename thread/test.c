@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <sys/time.h>
 # if 0
 //int arr[1000000]={0};
@@ -158,10 +159,10 @@ int main()
 }
 #endif
 
-#if 1
+#if 0
 //多线程版本
 #define SIZE 100000000
-#define THREAD_NUM 4
+#define THREAD_NUM 2
 void Calc(int*arr,int beg,int end)
 { 
   int i=beg;
@@ -206,18 +207,111 @@ int main()
     base+=SIZE/THREAD_NUM;
   }
   int64_t beg=GetUs();
-  int b=0;
-  for(b=0;b<THREAD_NUM;++b)
+  for(i=0;i<THREAD_NUM;++i)
   {
-    pthread_create(&tid[b],NULL,ThreadEntry,&args[b]);
+    pthread_create(&tid[i],NULL,ThreadEntry,&args[i]);
   }
-  int a=0;
-  for(a=0;a<THREAD_NUM;++a)
+  for(i=0;i<THREAD_NUM;++i)
   {
-    pthread_join(tid[a],NULL);
+    pthread_join(tid[i],NULL);
   }
  int64_t end=GetUs();
  printf("time=>%ld\n",end-beg);
   return 0;
 }
+#endif
+
+#if 0
+#define THREAD_NUM 1
+//一个函数可重入一定线程安全，但是一个函数线程安全不一定是可重入函数
+int g_count=0;
+pthread_mutex_t mutex;
+void Modifycount()
+   {
+   
+       pthread_mutex_lock(&mutex);
+       ++g_count;
+       printf("befor sleep\n");
+       sleep(3);
+       printf("after sleep\n");
+       pthread_mutex_unlock(&mutex);
+  }
+void* ThreadEntry(void* arg)
+{
+  (void)arg;
+  int i=0;
+  for(i;i<50000;++i)
+  {
+    Modifycount();
+  }
+  return NULL;
+}
+void MyHangdler(int sig)
+{
+  (void)sig;
+  Modifycount();
+}
+
+int main()
+{
+  //SIGINT -> 2号信号，可以通过ctrl+c产生
+  signal(SIGINT,MyHangdler);
+  pthread_mutex_init(&mutex,NULL);
+  pthread_t tid[THREAD_NUM];
+  int i=0;
+  for(i;i<THREAD_NUM;++i){
+  pthread_create(&tid[i],NULL,ThreadEntry,NULL);
+  }
+  for(i=0;i<THREAD_NUM;++i)
+  {
+    pthread_join(tid[i],NULL);
+  }
+  pthread_mutex_destroy(&mutex);
+  printf("g_count %d\n",g_count);
+  return 0;
+}
+
+#endif
+
+#if 1
+//互斥变量/互斥锁  互斥
+pthread_mutex_t mutex;
+//条件变量  同步
+pthread_cond_t cond;
+void *ThreadEntry1(void*arg)
+{
+  (void)arg;
+  while(1)
+  {
+    printf("传球\n");
+    pthread_cond_signal(&cond);
+    usleep(784444);
+  }
+  return NULL;
+}
+void*ThreadEntry2(void*arg)
+{
+  (void)arg;
+  while(1)
+  {
+    //执行这个phread_cond_wait 函数就会导致线程被阻塞，直到其他线程通过pthread_cond_signal发出一个通知
+    pthread_cond_wait(&cond,&mutex);
+    printf("扣篮\n");
+    usleep(123456);
+  }
+  return NULL;
+}
+
+int main()
+{
+  pthread_mutex_init(&mutex,NULL);
+  pthread_t tid1, tid2;
+  pthread_create(&tid1,NULL,ThreadEntry1,NULL);
+  pthread_create(&tid2,NULL,ThreadEntry2,NULL);
+  pthread_join(tid1,NULL);
+  pthread_join(tid2,NULL);
+  pthread_mutex_destroy(&mutex);
+  return 0;
+}
+
 #endif

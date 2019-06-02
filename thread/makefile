@@ -1,5 +1,5 @@
 test:test.c
-	gcc $^ -o $@ -lpthread -g
+	gcc $^ -o $@ -lpthread
 
 
 
