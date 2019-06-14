@@ -25,7 +25,7 @@ public:
   return true;
   }
 //给服务器使用
-  bool Bind(std::string &ip,uint16_t port){
+  bool Bind(const std::string &ip,uint16_t port){
     sockaddr_in addr;
     addr.sin_family=AF_INET;
     addr.sin_addr.s_addr=inet_addr(ip.c_str());
@@ -46,6 +46,7 @@ public:
     }
     return true;
   }
+
 //给服务器使用
   bool Accept(Tcpsocket *peer,std::string *ip=NULL,uint16_t* port=NULL){
     //accept 从连接队列中取一个连接到用户代码
@@ -97,8 +98,8 @@ public:
     }
     return true;
   }
-//给客户端使用
-  bool Connect(std::string&ip,uint16_t port){
+ //给客户端使用
+  bool Connect(const std::string &ip,uint16_t port){
     sockaddr_in addr;
     addr.sin_family=AF_INET;
     addr.sin_addr.s_addr=inet_addr(ip.c_str());
