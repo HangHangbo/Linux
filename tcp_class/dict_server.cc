@@ -1,5 +1,5 @@
 #include <unordered_map>
-#include "tcp_server.hpp"
+#include "tcp_process_server.hpp"
 
 int main()
 {
@@ -7,7 +7,7 @@ int main()
   dict.insert(std::make_pair("hello","你好"));
   dict.insert(std::make_pair("world","世界"));
   dict.insert(std::make_pair("bit","比特"));
-  TcpServer server;
+  TcpProserver server;
   server.Start("0.0.0.0",9090,[&dict](const std::string& req,std::string *resp)
       {
         auto it=dict.find(req);

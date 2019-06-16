@@ -7,9 +7,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-class Tcpsocket{
+class TcpSocket{
 public:
-  Tcpsocket()
+  TcpSocket()
     :fd_(-1)
   {
 
@@ -48,7 +48,7 @@ public:
   }
 
 //给服务器使用
-  bool Accept(Tcpsocket *peer,std::string *ip=NULL,uint16_t* port=NULL){
+  bool Accept(TcpSocket *peer,std::string *ip=NULL,uint16_t* port=NULL){
     //accept 从连接队列中取一个连接到用户代码
     //如果队列中没有连接，就会阻塞（默认行为）
     sockaddr_in peer_addr;  //对端的ip和端口号
