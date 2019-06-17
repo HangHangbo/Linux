@@ -15,7 +15,7 @@ int main(int argc,char* argv[])
     printf("连接成功\n");
   while(true){
     //从标准输入读数据
-    printf("请输入一段内容：\n");
+    printf("请输入一段内容：");
     fflush(stdout);
     char req[1024]={0};
     scanf("%s",req);

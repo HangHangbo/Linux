@@ -23,5 +23,5 @@ public:
   return sock_.Send(msg);
   }
 private:
-  Tcpsocket sock_;
+  TcpSocket sock_;
 };
