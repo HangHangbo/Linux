@@ -25,7 +25,7 @@ public:
     //4.进入主循环
     while(true){
       //5.通过accept获取到一个连接
-      Tcpsocket client_sock;
+      TcpSocket client_sock;
       std::string ip;
       uint16_t port;
      bool ret= listen_sock_.Accept(&client_sock,&ip,&port);
@@ -58,5 +58,5 @@ public:
     }
   }
 private:
-  Tcpsocket listen_sock_;
+  TcpSocket listen_sock_;
 };
