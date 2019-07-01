@@ -1,4 +1,4 @@
-
+#include <sstream>
 #include "tcp_client.hpp"
 
 int main(int argc,char* argv[])
@@ -18,10 +18,17 @@ int main(int argc,char* argv[])
     //从标准输入读数据
     printf("请输入一段内容：");
     fflush(stdout);
-    char req[1024]={0};
-    scanf("%s",req);
+    int num1=0;
+    int num2=0;
+    char op[10];
+    scanf("%d %d %s",&num1,&num2,op);
+
+    //序列化数据
+    std::stringstream ss;
+    ss<<num1<<" "<<num2<<" "<<op;
+    
     //把读到的数据发给服务器
-    client.Send(req);
+    client.Send(ss.str());
     std::string resp;
     //读取服务器发送的相应
     client.Recv(&resp);
