@@ -36,7 +36,7 @@ public:
                 perror("Accept");
                 continue;
             }
-            printf("[%s:%d]有新的客户端链接了！",peer_ip.c_str(),peer_port);
+            printf("[%s:%d]有新的客户端链接了！\n",peer_ip.c_str(),peer_port);
             //6.创建线程处理函数的逻辑
             ProcessConnect(client_sock,peer_ip,peer_port,handler);
     }
