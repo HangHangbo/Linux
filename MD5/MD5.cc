@@ -54,7 +54,6 @@ void MD5::calculateMD5(size_t *chunk){
 
 	size_t f, g;   //f哈希函数返回值   chunk[g]
 
-
 	//64次变换，4轮操作，每一轮操作：16个子操作
 	for (size_t i = 0; i < 64; i++){
 		if (0 <= i&&i < 16){
@@ -79,16 +78,13 @@ void MD5::calculateMD5(size_t *chunk){
 		c = b;
 		size_t exp=(a + f + k_[i] + chunk[g]);
 		b = b + shiftLeftRotate(exp, sft_[i]);
-		int time=10;
-		
-		if(i==15){
-			std::cout<<"------------------"<<std::endl;
-		while(time--){
-			std::cout<<(a + f + k_[i] + chunk[g])<<std::endl;
-			sleep(1);
-		}
-		std::cout<<"------------------"<<std::endl;
-		}
+		//TODO
+		//int time=10;
+		// if(i==15){
+		// 	std::cout<<"------------------"<<std::endl;
+		// 	std::cout<<(a + f + k_[i] + chunk[g])<<std::endl;
+		// 	std::cout<<"------------------"<<std::endl;
+		//}
 		a = dtmp;
 		
 		//TODO
@@ -121,10 +117,12 @@ void MD5::calculateMD5(size_t *chunk){
 //处理最后一个chunk
 void MD5::calculateMD5Final(){
 	//lastByte_:<64byte 最后一块数据大小
+	std::cout<<lastByte_<<std::endl;
 	unsigned char *p=chunk_ + lastByte_;
 	//填充位的前八bit位：1000 0000 0X80
 	*p++ = 0x80;
 	size_t remainFillByte = chunkByte_ - lastByte_ - 1;
+	
 	if (remainFillByte < 8){
 		//不够8字节存放原原始文档的bit长度
 		//先将这个处理单元 chunk_ 剩下的部分用0填充满
@@ -138,6 +136,7 @@ void MD5::calculateMD5Final(){
 	else{
 		memset(p, 0, remainFillByte);
 	}
+	
 	//最后八个字节存放原始文档的bit长度
 	((unsigned long long*)chunk_)[7] = totalByte_ * 8;
 	calculateMD5((size_t*)chunk_);

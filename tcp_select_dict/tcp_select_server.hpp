@@ -29,6 +29,7 @@ public:
 
     //Wait返回的时候 要告诉调用者那些文件描述符就绪了
     void Wait(std::vector<TcpSocket> *output){
+        output->clear();
         //调用Wait就相当于调用select进行等待
         //先获取到最大的文件描述符
         if(socket_set_.empty()){

@@ -11,8 +11,9 @@ class TcpSocket{
 public:
   TcpSocket()
     :fd_(-1)
-  {
-
+  {}
+  TcpSocket(int fd){
+    fd_=fd;
   }
   bool Socket(){
     //AF_INET IPV4
@@ -117,6 +118,9 @@ public:
       close(fd_);
     }
     return true;
+  }
+  int GetFd()const{
+    return fd_;
   }
 private:
   int fd_;
