@@ -85,11 +85,24 @@ void TestBlogTable(){
     // printf("selsct:%d\n",ret);
     // printf("%s\n",writer.write(author).c_str());
 
-    Json::Value author;
-    ret=author_table.SelectOne(&author,1);
-    printf("selsct:%d\n",ret);
-    printf("%s\n",writer.write(author).c_str());
+    // Json::Value author;
+    // ret=author_table.SelectOne(&author,1);
+    // printf("selsct:%d\n",ret);
+    // printf("%s\n",writer.write(author).c_str());
 
+    Json::Value author;
+    author["user_name"]="吴亦凡";
+    author["passwords"]="89564";
+    
+    // int32_t author_id;
+    // ret=author_table.Selsectid_log(author,author_id);
+    // printf("select:%d\n%d\n",ret,author_id);
+    
+    ret=author_table.Selsectid(author);
+    printf("select:%d\n",ret);
+    
+    
+    blog_system::MySQLRelease(mysql);
 }
 
 int main(){

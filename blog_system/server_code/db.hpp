@@ -71,7 +71,7 @@ public:
     //查
     //blogs 作为一个输出线参数
     //按标签查找或者全部查找
-    bool SelectAllTA(Json::Value *blogs,const std::string& tag_id=""){
+    bool SelectAll(Json::Value *blogs,const std::string& tag_id=""){
         char sql[1024*4]={0};
         if(tag_id==""){
             //不按tag查找
@@ -290,6 +290,8 @@ private:
         }
 
         //查
+
+        //查看用户列表
         bool SelectAll(Json::Value* authors){
             char sql[1024*4]={0};
             sprintf(sql,"select author_id,user_name from author_table");
@@ -312,6 +314,8 @@ private:
             mysql_free_result(result);
             return true;
         } 
+
+        //根据id查用户 名字 密码 登陆时用
         bool SelectOne(Json::Value* authors,int32_t author_id){
             printf("有用户请求登陆！\n");
             char sql[1024*4]={0};
@@ -335,6 +339,68 @@ private:
             printf("查找成功！");
             return true; 
         }
+
+
+        //用账号密码查id
+        bool Selsectid_log(Json::Value& author,int32_t &author_id){
+            printf("id 用户登陆!\n");
+            //拼接sql语句
+            char sql[1024*4]={0};
+            //printf("user_name:%s\npassword:%s",author["user_name"].asCString(),author["passwords"].asCString());
+            sprintf(sql,"select author_id from author_table where user_name='%s'and passwords='%s'",
+            author["user_name"].asCString(),
+            author["passwords"].asCString());
+            //printf("%s\n",sql);
+            //执行sql语句
+            int ret=mysql_query(mysql_,sql);
+            if(ret!=0){
+                printf("执行sql语句失败！\n");
+                return false;
+            }
+            printf("找到用户！\n");
+            //获取sql语句执行结果
+            MYSQL_RES* result=mysql_store_result(mysql_);
+            int rows=mysql_num_rows(result);
+            if(rows!=1){
+                printf("该用户已存在！\n");
+                return false;
+            }
+            printf("该用户为新用户！\n");
+            MYSQL_ROW row=mysql_fetch_row(result);
+            author_id=atoi(row[0]);
+            return true;
+        }
+
+        //查看用户数是否存在，存在则为 false 不存在 true
+        bool Selsectid(Json::Value& author){
+            printf("查看用户是否已经存在!\n");
+            //拼接sql语句
+            char sql[1024*4]={0};
+            //printf("user_name:%s\npassword:%s",author["user_name"].asCString(),author["passwords"].asCString());
+            sprintf(sql,"select author_id from author_table where user_name='%s'and passwords='%s'",
+            author["user_name"].asCString(),
+            author["passwords"].asCString());
+            //printf("%s\n",sql);
+            //执行sql语句
+            int ret=mysql_query(mysql_,sql);
+            if(ret!=0){
+                printf("执行sql语句失败！\n");
+                return false;
+            }
+           
+            //获取sql语句执行结果
+            MYSQL_RES* result=mysql_store_result(mysql_);
+            int rows=mysql_num_rows(result);
+            //printf("rows:%d\n",rows);
+            if(rows!=0){
+                printf("该用户未注册！\n");
+                return false;
+            }
+            printf("此用户可以注册！\n");
+            return true;
+        }
+
+
     private:
         MYSQL* mysql_;
     };
